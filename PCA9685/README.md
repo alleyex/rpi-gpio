@@ -1,5 +1,74 @@
 # PCA9685 模組說明
 
+## Raspberry Pi 5 設定
+
+### 1. 啟用 I2C 介面
+
+在 Raspberry Pi 5 上，需要先啟用 I2C 介面：
+
+```bash
+# 使用 raspi-config 工具
+sudo raspi-config
+# 選擇 "Interface Options" -> "I2C" -> "Yes"
+```
+
+或直接編輯 `/boot/config.txt`：
+
+```bash
+sudo nano /boot/config.txt
+# 添加或取消註釋以下行：
+dtparam=i2c_arm=on
+```
+
+### 2. 安裝必要套件
+
+```bash
+# 更新套件列表
+sudo apt update
+
+# 安裝 Python 開發工具
+sudo apt install python3-dev python3-pip
+
+# 安裝 I2C 工具
+sudo apt install i2c-tools
+
+# 安裝 Python 依賴套件
+pip3 install adafruit-circuitpython-pca9685
+```
+
+### 3. 檢查 I2C 設備
+
+```bash
+# 檢查 I2C 設備是否被識別
+sudo i2cdetect -y 1
+```
+
+如果 PCA9685 正確連接，應該會看到地址 `0x40`（或其他設定的地址）。
+
+### 4. 權限設定
+
+確保使用者有權限訪問 I2C 設備：
+
+```bash
+# 將使用者加入 i2c 群組
+sudo usermod -aG i2c $USER
+
+# 重新登入或執行以下命令使更改生效
+newgrp i2c
+```
+
+### 5. 測試連接
+
+使用以下命令測試 I2C 連接：
+
+```bash
+# 檢查 I2C 設備
+sudo i2cdetect -y 1
+
+# 檢查 I2C 模組是否載入
+lsmod | grep i2c
+```
+
 ## PCA9685 模組介紹
 
 ![PCA9685 模組](pic/PCA9685.jpg)
