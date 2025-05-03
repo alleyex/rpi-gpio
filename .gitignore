@@ -30,9 +30,12 @@ ENV/
 *.swp
 *.swo
 
-# OS
+# Logs
+*.log
+
+# System
 .DS_Store
-Thumbs.db 
+Thumbs.db
 
 # Ohter
 .lgd-nfy0
