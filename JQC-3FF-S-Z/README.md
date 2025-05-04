@@ -1,6 +1,6 @@
 # 5V 單通道繼電器模組（JQC-3FF-S-Z）
 
-![Relay Module](JQC-3FF-S-Z(a).jpg)
+![Relay Module](pic/JQC-3FF-S-Z.jpg)
 
 ## 簡介
 本模組為 5V 單通道繼電器模組，適用於樹莓派、Arduino 等單板電腦或微控制器，可用於控制高壓/大電流設備。
