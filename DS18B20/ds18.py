@@ -45,18 +45,21 @@ class TemperatureSensor:
         sensor: W1ThermSensor 實例
         retry_interval: 重試間隔時間（秒）
         max_retries: 最大重試次數
+        gpio_pin: 使用的 GPIO 引腳編號
     """
-    def __init__(self, retry_interval: int = 1, max_retries: int = 3):
+    def __init__(self, gpio_pin: int = 4, retry_interval: int = 1, max_retries: int = 3):
         """
         初始化溫度感測器
         
         Args:
+            gpio_pin (int): 使用的 GPIO 引腳編號，預設為 4
             retry_interval (int): 重試間隔（秒），預設為 1 秒
             max_retries (int): 最大重試次數，預設為 3 次
         """
         self.sensor = None
         self.retry_interval = retry_interval
         self.max_retries = max_retries
+        self.gpio_pin = gpio_pin
         self.initialize_sensor()
 
     def initialize_sensor(self) -> bool:
@@ -70,11 +73,11 @@ class TemperatureSensor:
             bool: 初始化是否成功
         """
         try:
-            self.sensor = W1ThermSensor()
-            logger.info("溫度感測器初始化成功")
+            self.sensor = W1ThermSensor(W1ThermSensor.THERM_SENSOR_DS18B20, self.gpio_pin)
+            logger.info(f"溫度感測器初始化成功 (GPIO{self.gpio_pin})")
             return True
         except Exception as e:
-            logger.error(f"初始化感測器時發生錯誤: {e}")
+            logger.error(f"初始化感測器時發生錯誤 (GPIO{self.gpio_pin}): {e}")
             self.sensor = None
             return False
 

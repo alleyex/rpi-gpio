@@ -75,6 +75,32 @@ DS18B20 通常有三個引腳：
 - 確保樹莓派和 DS18B20 的電源供應穩定
 - 每個 DS18B20 感測器在製造時就已經被賦予了唯一的 64 位元序列號，可以通過序列號來區分和讀取不同感測器的數據
 
+### GPIO 引腳使用注意事項
+
+1. 特殊功能引腳：
+   - GPIO2 和 GPIO3 預設用於 I2C，雖可作為 GPIO 使用，但要小心與 I2C 裝置衝突
+   - GPIO14 和 GPIO15 預設是 UART，使用前要確認不會干擾序列通訊
+
+2. 電壓限制：
+   - 不要把電壓超過 3.3V 的訊號直接接到 GPIO！
+   - Raspberry Pi 的 GPIO 是 3.3V 容忍度，超過可能損壞 Pi
+
+3. 建議使用的 GPIO 引腳：
+   - GPIO4（預設）
+   - GPIO17
+   - GPIO18
+   - GPIO22
+   - GPIO23
+   - GPIO24
+   - GPIO25
+   - GPIO27
+
+4. 其他注意事項：
+   - 使用前請確認 GPIO 引腳沒有被其他功能使用
+   - 建議在 `/boot/config.txt` 中明確設定要使用的 GPIO 引腳
+   - 修改設定後需要重新啟動樹莓派
+   - 使用高速通訊或特殊協定（如 1-Wire）使用非預設 GPIO 引腳時，建議仍然連接 4.7kΩ 的上拉電阻
+
 ## TemperatureSensor 使用範例
 
 ### 基本使用
@@ -84,8 +110,11 @@ DS18B20 通常有三個引腳：
 ```python
 from ds18 import TemperatureSensor
 
-# 建立感測器實例
+# 建立感測器實例（使用預設的 GPIO4）
 sensor = TemperatureSensor()
+
+# 或者指定其他 GPIO 引腳
+sensor = TemperatureSensor(gpio_pin=17)  # 使用 GPIO17
 
 # 讀取溫度
 temperature, timestamp = sensor.read_temperature()
@@ -101,10 +130,11 @@ TemperatureSensor 類別提供了更多進階功能，例如重試機制和錯�
 from ds18 import TemperatureSensor
 import time
 
-# 建立感測器實例，設定重試參數
+# 建立感測器實例，設定重試參數和 GPIO 引腳
 sensor = TemperatureSensor(
-    retry_interval=2,  # 重試間隔為 2 秒
-    max_retries=5      # 最多重試 5 次
+    gpio_pin=17,        # 使用 GPIO17
+    retry_interval=2,   # 重試間隔為 2 秒
+    max_retries=5       # 最多重試 5 次
 )
 
 try:
@@ -126,8 +156,9 @@ except KeyboardInterrupt:
 
 ### 類別方法說明
 
-1. `__init__(retry_interval=1, max_retries=3)`
+1. `__init__(gpio_pin=4, retry_interval=1, max_retries=3)`
    - 初始化感測器
+   - `gpio_pin`: 使用的 GPIO 引腳編號（預設為 4）
    - `retry_interval`: 重試間隔時間（秒）
    - `max_retries`: 最大重試次數
 
